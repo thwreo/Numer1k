@@ -1,0 +1,59 @@
+PART 1
+
+generate_probabilities_system 
+- initializeaza o 'matrice labirit', in care sunt introdusi indicii intersectiilor interioare (nr intersectii = (nr coloane labirint * (nr coloane labirint + 1) ) / 2 );
+este inregistrat vectorul de probabilitati al primei intersectii a labirintului in prima linie a matricei A; pentru fiecare intersectie interioara se verifica urmatoarele: daca intersectia se afla langa orice coridor exterior (daca intersectia se afla pe ultima linie a labirintului, valoarea vectorului b corespunzatoare vectorului de probabilitati al intersectiei respective va avea valoarea 1), daca intersectia este invecinata cu alte intersectii (dreapta/stanga sus, drapta/stanga, drapta/stanga jos) ~ se adauga valori corespunzatoare in vectorul de probabilitati al intersectiei ( fie v vectorul de probabilitati al intersectiei i; dim v = (1,nr intersectii) ; v(i) = nr de cai de acces catre intersectiile invecinate sau coridoarele exterioare, celelalte valori fiind 0 sau 1 ( daca i are acces la 1,2,...., atunci v(1) = -1, v(2) = -1....,altfel 0)
+
+matrix_to_csr
+- retine o matrice (in cazul nostru, matricea A densa) intr-o forma "comprimata"
+
+Jacobi_factorization
+- returneaza matricea de iteratie si vectorul de iteratie, reprezentative metoda Jacobi
+
+Jacobi_sparse
+- rezolva sistemul de ecuatii folosindu-se de matricea de iteratie in forma sa "comprimata", vectorul de iteratie si toleranta impusa
+
+
+PART 2
+
+clustering_pc
+- primeste o matrice de puncte si o valoare intreaga, ce reprezinta numarul de clustere in care trebuie segmentata matricea de puncte; returneaza un vector pe puncte ce reprezinta centroizii clusterelor (initial, pentru clusterul i este compus din elementele de pe liniile matricei de puncte, ale caror indici % numar de clustere dorit = i (pt clusterul cu indicele NUMAR DE CLUSTERE, LINIE % i = 0); se retine dimensinea clusterului (nr de puncte din cluster i) si se calculeaza centroidul specific (sum/dim); ulterior, se iau centroizii initiali si se recentreaza (clusterele corespunzatoare centroizilor se formeaza cu ajutorul normei dintre punct si centroidul actual, norma fiind minima); se repeta procedeul de recentrare pana cand norma centroizilor curenti si a celor precedenti este foarte mica (o diferenta de 10^(-5) );
+
+compute_cost_pc
+- calculeaza distanta dintre fiecare punct si cel mai apropiat centroid, valori ce se adauga la suma costului
+
+
+PART 3
+
+rgbHistogram
+- calculeaza histograma rgb a unei imagini ( vectorul de  "acumulari" pentru cantitatea de rosu, verde, albastru dintr-o imagine; se specifica numarul de intervale de "acumulare")
+
+hsvHistogram
+- calculeaza histograma hsv a unei imagini 
+
+rgbTOhsv
+- transforma valorile RGB in valori HSV, conform algoritmului de transformare
+
+Householder
+- returneaza matricea ortogonala si cea superior triunghiulara a matricei primita ca parametru
+
+SST
+- rezolva un sistem superior triunghiular
+
+preprocess
+- returneaza o matrice de caracteristici ce contine pe fiecare linie cate o histograma corespunzatoare unei imagini (cu pisici sau nu) si un vector linie de etichete 
+
+learn
+- rezolva cu ajutorul functiilor Householder si SST sistemul de exuatii X_tilda*w = y, unde X_tilda este matricea de carateristici pentru un set de date (returnata de preprocess), la care se adauga o coloana de 1, y vector de etichete; X_tilda se descompune in Q R cu ajutorul Householder, deci Q*R*w = y ; se inmulteste cu Q' la stanga si se obtine R*w = Q'*y, sistem ce se rezolva cu SST, astfel evitandu-se calcularea inversei X_tilda
+
+percentage
+- returneaza un procentaj al numarului de imagini clasificate corect (cu pisici sau fara)
+
+
+PART 4
+
+learn
+- rezolva cu ajutorul algoritmului MINI-BATCH GRADIENT DESCENT sistemul de ecuatii X_tilda * w = y, unde X_tilda = matrice de caracteristici pentru un set de imagini,la care de adauga o coloana de 1 si y vectorul de etichete (imaginea corespunzatoare liniei i din matricea de caracteristici este cu pisici (y(i) = 1) sau nu (y(i) = -1) ); algoritmul reduce aparitia erorilor de aproximare
+
+evaluate
+- returneaza un procentaj al numarului de imagini, dintr-un set de date, clasificate corect (cu pisici sau nu) 
